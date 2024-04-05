@@ -11,7 +11,7 @@ export enum UserRole {
   ADMIN = 'admin',
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, versionKey: false })
 export class UserEntity {
   @Prop({ required: [true, 'please Enter your name.'] })
   @IsString()
