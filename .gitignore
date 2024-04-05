@@ -1,5 +1,5 @@
 .env
-
+errors.ts
 # compiled output
 /dist
 /node_modules
