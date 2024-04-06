@@ -12,7 +12,7 @@ export class VerificationToken {
   @Prop({ required: true })
   @IsEmail()
   email: string;
-  @Prop({ required: true })
+  @Prop()
   @IsString()
   token: string;
   @Prop()

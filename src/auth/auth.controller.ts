@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
+  Param,
   Post,
+  Req,
   ValidationPipe,
 } from '@nestjs/common';
 import { RegisterDTO } from './DTOs/register.dto';
@@ -18,5 +21,23 @@ export class AuthController {
       throw new HttpException('password must match with passwordConfirm.', 500);
 
     return this.AuthService.register(credentials);
+  }
+
+  @Post('/get-verification-token')
+  async getVerificationToken(@Body() body: { email: string }) {
+    console.log(body);
+    return this.AuthService.getVerificationToken(body.email);
+  }
+
+  @Get('/activate-user/:verificationToken/:activationCode')
+  async activateUser(
+    @Param('verificationToken') verificationToken: string,
+    @Param('activationCode') activationCode: string,
+  ) {
+    // return {
+    //   verificationToken,
+    //   activationCode,
+    // };
+    return this.AuthService.verifyToken(verificationToken, activationCode);
   }
 }

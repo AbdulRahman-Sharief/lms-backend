@@ -1,0 +1,1 @@
+- do not allow user to request more than one token every 10 mins.

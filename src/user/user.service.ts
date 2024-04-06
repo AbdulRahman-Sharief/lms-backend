@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -20,6 +21,18 @@ export class UserService {
       if (error.code === 11000)
         throw new ConflictException('Email has already been taken');
       throw new InternalServerErrorException();
+    }
+  }
+  async findUserByEmail(email: string): Promise<UserDocument> {
+    try {
+      const user = await this.UserModel.findOne({ email }).exec();
+      return user;
+    } catch (err) {
+      if (err.name === 'CastError') {
+        const message = `Resource Not found. Invalid ${err.path}`;
+        err = new HttpException(message, 400);
+        throw err;
+      }
     }
   }
 }
