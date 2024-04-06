@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailModule } from 'src/email/email.module';
+import { Model } from 'mongoose';
 
 @Module({
   imports: [

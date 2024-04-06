@@ -26,9 +26,9 @@ export class EmailService {
   ): Promise<any> {
     await this.mailerService
       .sendMail({
-        to: user.name, // list of receivers
+        to: user.email, // list of receivers
         subject: 'Verifiy Your Email.', // Subject line
-        template: './activation.mail',
+        template: './activation.mail.ejs',
         context: {
           user,
           activationCode,

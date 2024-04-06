@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { VerificationTokenSchema } from 'src/models/auth/token.entity';
 import { UserSchema } from 'src/models/user/user.entity';
 
 @Module({
@@ -12,6 +13,9 @@ import { UserSchema } from 'src/models/user/user.entity';
       // autoIndex: true,
     }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'VerificationToken', schema: VerificationTokenSchema },
+    ]),
   ],
   exports: [MongooseModule],
 })
