@@ -39,6 +39,7 @@ export class UserEntity {
   @IsString({ message: 'password field must be of type string.' })
   password: string;
   @Prop({ default: new Date() })
+  @Exclude()
   passwordChangedAt: Date;
 
   @Prop({
@@ -62,7 +63,10 @@ export class UserEntity {
     },
   ])
   courses: { courseId: string }[];
-
+  @Prop({})
+  access_token: string;
+  @Prop({})
+  refresh_token: string;
   // hash the password
   async hashPassword() {
     if (this.password !== null) {
@@ -77,7 +81,6 @@ export class UserEntity {
   // toJSON() {
   //   return instanceToPlain(this);
   // }
-
   changePasswordAfter(JWTTimestamp) {
     if (this.passwordChangedAt) {
       const changedTimestamp = Math.floor(
