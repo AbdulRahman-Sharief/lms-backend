@@ -201,4 +201,14 @@ export class AuthService {
       return new HttpException(error.message, 400);
     }
   }
+  async validateUser(email: string, password: string) {
+    const user = await this.UserService.findUserByEmail(email);
+    const isPasswordCorrect = await user.comparePassword(password);
+
+    console.log(isPasswordCorrect);
+    if (user && isPasswordCorrect) {
+      return user;
+    }
+    return null;
+  }
 }

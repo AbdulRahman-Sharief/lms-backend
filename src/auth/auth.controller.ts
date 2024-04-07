@@ -13,10 +13,11 @@ import { RegisterDTO } from './DTOs/register.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { LoginDTO } from './DTOs/login.dto';
+import { Public } from 'src/decorators/Public.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private AuthService: AuthService) {}
-  // @Public()
+  @Public()
   @Post('/register')
   async register(@Body(ValidationPipe) credentials: RegisterDTO) {
     if (credentials.password !== credentials.passwordConfirm)
@@ -24,13 +25,13 @@ export class AuthController {
 
     return this.AuthService.register(credentials);
   }
-
+  @Public()
   @Post('/get-verification-token')
   async getVerificationToken(@Body() body: { email: string }) {
     console.log(body);
     return this.AuthService.getVerificationToken(body.email);
   }
-
+  @Public()
   @Get('/activate-user/:verificationToken/:activationCode')
   async activateUser(
     @Param('verificationToken') verificationToken: string,
@@ -38,6 +39,8 @@ export class AuthController {
   ) {
     return this.AuthService.verifyToken(verificationToken, activationCode);
   }
+
+  @Public()
   @Post('/login')
   async login(@Body() body: LoginDTO, @Res() res: Response) {
     return this.AuthService.login(body, res);

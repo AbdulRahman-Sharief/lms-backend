@@ -10,6 +10,8 @@ import { DatabaseModule } from './database/database.module';
 import { EmailModule } from './email/email.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisCacheModule } from './redis-cache/redis-cache.module';
+import { JwtGuard } from './auth/guards/jwt-auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,7 +22,13 @@ import { RedisCacheModule } from './redis-cache/redis-cache.module';
     RedisCacheModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+  ],
   exports: [],
 })
 export class AppModule implements NestModule {
