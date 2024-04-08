@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { RegisterDTO } from './DTOs/register.dto';
@@ -14,6 +15,9 @@ import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { LoginDTO } from './DTOs/login.dto';
 import { Public } from 'src/decorators/Public.decorator';
+import { RolesGuard } from './guards/role-auth.guard';
+import { Roles } from 'src/decorators/Roles.decorator';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private AuthService: AuthService) {}
@@ -41,12 +45,19 @@ export class AuthController {
   }
 
   @Public()
+  @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Body() body: LoginDTO, @Res() res: Response) {
-    return this.AuthService.login(body, res);
+  async login(
+    @Body() body: LoginDTO,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    return this.AuthService.login(req, res);
   }
 
+  @UseGuards(RolesGuard)
   @Get('/logout')
+  @Roles(['user'])
   async logout(@Req() req: Request, @Res() res: Response) {
     return this.AuthService.logout(req, res);
   }

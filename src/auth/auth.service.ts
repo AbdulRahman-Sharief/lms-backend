@@ -171,18 +171,10 @@ export class AuthService {
       access_token,
     });
   }
-  async login(body: LoginDTO, res: Response) {
+  async login(req: any, res: Response) {
     try {
-      const { email, password } = body;
-      const user = await this.UserService.findUserByEmail(email);
-      const isPasswordCorrect = await user.comparePassword(password);
-      if (!isPasswordCorrect) return new HttpException('Invalid password', 400);
-      if (!user.emailVerified)
-        return new HttpException(
-          'We have not verified your email yet!. please check your inbox and activate your account.',
-          400,
-        );
-      return this.sendToken(user, 200, res);
+      console.log(req.user);
+      return this.sendToken(req.user, 200, res);
     } catch (error) {
       return new HttpException(error.message, 400);
     }
@@ -204,11 +196,19 @@ export class AuthService {
       return new HttpException(error.message, 400);
     }
   }
-  async validateUser(email: string, password: string) {
+  async validateUser(email: LoginDTO['email'], password: LoginDTO['password']) {
+    console.log(email);
     const user = await this.UserService.findUserByEmail(email);
+    console.log(user);
     const isPasswordCorrect = await user.comparePassword(password);
 
     console.log(isPasswordCorrect);
+    if (!isPasswordCorrect) return new HttpException('Invalid password', 400);
+    if (!user.emailVerified)
+      return new HttpException(
+        'We have not verified your email yet!. please check your inbox and activate your account.',
+        400,
+      );
     if (user && isPasswordCorrect) {
       return user;
     }

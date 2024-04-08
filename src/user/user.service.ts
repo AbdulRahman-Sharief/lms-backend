@@ -8,10 +8,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RegisterDTO } from 'src/auth/DTOs/register.dto';
 import { UserDocument, UserEntity } from 'src/models/user/user.entity';
+import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private UserModel: Model<UserEntity>) {}
+  constructor(
+    @InjectModel('User') private UserModel: Model<UserEntity>,
+    private readonly redisCacheService: RedisCacheService,
+  ) {}
   async createUser(credentials: RegisterDTO): Promise<UserDocument> {
     try {
       const user = new this.UserModel(credentials);
@@ -34,5 +38,11 @@ export class UserService {
         throw err;
       }
     }
+  }
+  async getCachedUserById(id: string): Promise<UserDocument> {
+    const user = await this.redisCacheService.getValue(id);
+    console.log(user);
+    console.log(id);
+    return JSON.parse(user);
   }
 }
