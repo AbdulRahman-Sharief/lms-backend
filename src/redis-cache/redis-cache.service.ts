@@ -14,4 +14,7 @@ export class RedisCacheService {
     // Get a value from Redis cache
     return await this.cacheService.get(key);
   }
+  async delValue(key: string): Promise<void> {
+    return await this.cacheService.del(key);
+  }
 }

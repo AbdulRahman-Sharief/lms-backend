@@ -13,11 +13,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { VerificationToken } from 'src/models/auth/token.entity';
 import { Model } from 'mongoose';
 import { UserDocument } from 'src/models/user/user.entity';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import * as cacheManager from 'cache-manager';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
-import { Request } from 'express-serve-static-core';
 import { LoginDTO } from './DTOs/login.dto';
 interface ITokenOptions {
   expires: Date;
@@ -189,10 +188,14 @@ export class AuthService {
     }
   }
 
-  async logout(res: Response) {
+  async logout(req: any, res: Response) {
     try {
       res.cookie('access_token', '', { maxAge: 1 });
       res.cookie('refresh_token', '', { maxAge: 1 });
+      console.log(req.user);
+      const user = await this.redisCacheService.getValue(req.user.userId);
+      console.log(user);
+      await this.redisCacheService.delValue(req.user.userId);
       return res.status(200).json({
         status: 'success',
         message: 'Logged out Successfully.',
