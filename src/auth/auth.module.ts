@@ -16,6 +16,7 @@ import { JwtGuardStrategy } from './guards/jwt-auth.strategy';
 import { GoogleStrategy } from './guards/google-oauth.strategy';
 import { GithubStrategy } from './guards/github-oauth.strategy';
 import { LocalStrategy } from './guards/local-auth.strategy';
+import { JwtRefreshTokenStrategy } from './guards/refresh-auth.strategy';
 @Module({
   imports: [
     DatabaseModule,
@@ -36,6 +37,7 @@ import { LocalStrategy } from './guards/local-auth.strategy';
     AuthService,
     UserService,
     JwtGuardStrategy,
+    JwtRefreshTokenStrategy,
     GoogleStrategy,
     GithubStrategy,
     LocalStrategy,

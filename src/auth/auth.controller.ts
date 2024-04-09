@@ -18,6 +18,7 @@ import { Public } from 'src/decorators/Public.decorator';
 import { RolesGuard } from './guards/role-auth.guard';
 import { Roles } from 'src/decorators/Roles.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import JwtRefreshGuard from './guards/refresh-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private AuthService: AuthService) {}
@@ -55,10 +56,17 @@ export class AuthController {
     return this.AuthService.login(req, res);
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtRefreshGuard, RolesGuard)
   @Get('/logout')
   @Roles(['user'])
   async logout(@Req() req: Request, @Res() res: Response) {
     return this.AuthService.logout(req, res);
+  }
+  @Public()
+  @UseGuards(JwtRefreshGuard)
+  @Get('/refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    console.log(req.cookies);
+    return this.AuthService.refreshToken(req, res);
   }
 }

@@ -25,6 +25,29 @@ interface ITokenOptions {
   sameSite: boolean | 'lax' | 'strict' | 'none';
   secure?: boolean;
 }
+//parse env variables to integrate with fallback values.
+export const accessTokenExpire = parseInt(
+  process.env.ACCESS_TOKEN_EXPIRE || '300',
+  10,
+);
+export const refreshTokenExpire = parseInt(
+  process.env.ACCESS_TOKEN_EXPIRE || '1200',
+  10,
+);
+
+//options for cookies.
+export const accessTokenOptions: ITokenOptions = {
+  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000),
+  maxAge: accessTokenExpire * 60 * 60 * 1000,
+  httpOnly: true,
+  sameSite: 'lax',
+};
+export const refreshTokenOptions: ITokenOptions = {
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  sameSite: 'lax',
+};
 @Injectable()
 export class AuthService {
   constructor(
@@ -125,8 +148,18 @@ export class AuthService {
   }
 
   async sendToken(user: UserDocument, statusCode: number, res: Response) {
-    const access_token = await this.JwtService.signAsync({ sub: user._id });
-    const refresh_token = await this.JwtService.signAsync({ sub: user._id });
+    const access_token = await this.JwtService.signAsync(
+      { sub: user._id },
+      {
+        secret: process.env.ACCESS_TOKEN_SECRET,
+      },
+    );
+    const refresh_token = await this.JwtService.signAsync(
+      { sub: user._id },
+      {
+        secret: process.env.REFRESH_TOKEN_SECRET,
+      },
+    );
     user.access_token = access_token;
     user.refresh_token = refresh_token;
 
@@ -138,29 +171,7 @@ export class AuthService {
     console.log('createdVal: ', createdVal);
     const val = await this.redisCacheService.getValue(user._id.toString());
     console.log('val: ', val);
-    //parse env variables to integrate with fallback values.
-    const accessTokenExpire = parseInt(
-      process.env.ACCESS_TOKEN_EXPIRE || '300',
-      10,
-    );
-    const refreshTokenExpire = parseInt(
-      process.env.ACCESS_TOKEN_EXPIRE || '1200',
-      10,
-    );
 
-    //options for cookies.
-    const accessTokenOptions: ITokenOptions = {
-      expires: new Date(Date.now() + accessTokenExpire * 1000),
-      maxAge: accessTokenExpire * 1000,
-      httpOnly: true,
-      sameSite: 'lax',
-    };
-    const refreshTokenOptions: ITokenOptions = {
-      expires: new Date(Date.now() + refreshTokenExpire * 1000),
-      maxAge: refreshTokenExpire * 1000,
-      httpOnly: true,
-      sameSite: 'lax',
-    };
     //only set secure to true in production.
     if (process.env.NODE_ENV === 'production') accessTokenOptions.secure = true;
     res.cookie('access_token', access_token, accessTokenOptions);
@@ -213,5 +224,10 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async refreshToken(req: any, res: Response) {
+    console.log(req.user);
+    await this.sendToken(req.user.user, 200, res);
   }
 }
