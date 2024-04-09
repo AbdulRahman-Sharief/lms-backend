@@ -23,7 +23,8 @@ export class SerializeInterceptor implements NestInterceptor {
     return handler.handle().pipe(
       map((data: any) => {
         return plainToInstance(this.dto, data, {
-          excludeExtraneousValues: true,
+          // excludeExtraneousValues: true,
+          excludePrefixes: ['$__', '_', '$'],
         });
       }),
     );

@@ -49,7 +49,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   async login(
-    @Body() body: LoginDTO,
+    // @Body() body: LoginDTO,
     @Req() req: Request,
     @Res() res: Response,
   ) {

@@ -1,1 +1,5 @@
 - do not allow user to request more than one token every 10 mins.
+- password forget/reset process.
+- allow user to update his own password when he is logged in. & frontend should call logout endpoint to logout the user and try to login again with the new password.
+- allow user to update his own email and verify that email through otp code sent to his email.
+- allow user to update his own avatar when he is logged in.

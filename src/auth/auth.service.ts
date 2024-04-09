@@ -214,9 +214,9 @@ export class AuthService {
     const isPasswordCorrect = await user.comparePassword(password);
 
     console.log(isPasswordCorrect);
-    if (!isPasswordCorrect) return new HttpException('Invalid password', 400);
+    if (!isPasswordCorrect) throw new HttpException('Invalid password', 400);
     if (!user.emailVerified)
-      return new HttpException(
+      throw new HttpException(
         'We have not verified your email yet!. please check your inbox and activate your account.',
         400,
       );

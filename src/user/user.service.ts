@@ -57,4 +57,61 @@ export class UserService {
     console.log(id);
     return JSON.parse(user);
   }
+
+  async updateUserName({ userId, name }: { userId: string; name: string }) {
+    try {
+      const user = await this.findUserById(userId);
+
+      if (name && user) {
+        const updatedUser = await this.UserModel.findByIdAndUpdate(userId, {
+          name,
+        }).exec();
+        console.log('updateddbUser: ', updatedUser);
+        const updatedCachedUser = await this.redisCacheService.setValue(
+          userId,
+          JSON.stringify(updatedUser),
+        );
+        console.log('updatedCachedUser: ', updatedCachedUser);
+        return {
+          status: 'success',
+          message: `your name has been updated successfully.`,
+          updatedName: updatedUser.name,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, 400);
+    }
+  }
+  async updateUserPassword({
+    userId,
+    password,
+  }: {
+    userId: string;
+    password: string;
+  }) {
+    try {
+      const user = await this.findUserById(userId);
+
+      if (password && user) {
+        user.password = password;
+        const updatedUser = await user.save();
+
+        console.log('updateddbUser: ', updatedUser);
+        const updatedCachedUser = await this.redisCacheService.setValue(
+          userId,
+          JSON.stringify(updatedUser),
+        );
+        console.log('updatedCachedUser: ', updatedCachedUser);
+        return {
+          status: 'success',
+          message: `your password has been updated successfully, go and login with the new password.`,
+          updatedUser,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, 400);
+    }
+  }
 }

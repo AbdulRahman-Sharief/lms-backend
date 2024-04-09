@@ -17,10 +17,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RedisCacheModule } from './redis-cache/redis-cache.module';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import {
-  Serialize,
-  SerializeInterceptor,
-} from './interceptors/serialize.interceptor';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

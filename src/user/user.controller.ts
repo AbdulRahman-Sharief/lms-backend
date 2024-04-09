@@ -1,7 +1,9 @@
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Patch,
   Req,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,5 +21,34 @@ export class UserController {
     console.log(req.user);
     // return req.user.userId;
     return this.userService.findUserById(req.user.userId);
+  }
+  @Patch('update-name')
+  async updateUserName(@Req() req: any, @Body() body: { name: string }) {
+    const user = req.user.user;
+    const userId = req.user.userId;
+    const name = body.name;
+    console.log('name: ', name);
+    console.log('userId: ', userId);
+    console.log('user: ', user);
+    return await this.userService.updateUserName({ userId, name });
+  }
+
+  @Patch('update-password')
+  async updateUserPassword(
+    @Req() req: any,
+    @Body() body: { password: string; passwordConfirm: string },
+  ) {
+    const user = req.user.user;
+    const userId = req.user.userId;
+    if (body.password !== body.passwordConfirm) {
+      return {
+        status: 'fail',
+        message: 'password and passwordConfirm does not match.',
+      };
+    }
+    const password = body.password;
+    console.log('userId: ', userId);
+    console.log('user: ', user);
+    return this.userService.updateUserPassword({ userId, password });
   }
 }

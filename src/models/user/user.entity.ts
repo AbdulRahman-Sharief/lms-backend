@@ -82,7 +82,7 @@ export class UserEntity {
   // toJSON() {
   //   return instanceToPlain(this);
   // }
-  changePasswordAfter(JWTTimestamp) {
+  changePasswordAfter(JWTTimestamp: number) {
     if (this.passwordChangedAt) {
       const changedTimestamp = Math.floor(
         this.passwordChangedAt.getTime() / 1000,
