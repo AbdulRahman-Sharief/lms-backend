@@ -39,6 +39,18 @@ export class UserService {
       }
     }
   }
+  async findUserById(id: string): Promise<UserDocument> {
+    try {
+      const user = await this.UserModel.findById(id).exec();
+      return user;
+    } catch (err) {
+      if (err.name === 'CastError') {
+        const message = `Resource Not found. Invalid ${err.path}`;
+        err = new HttpException(message, 400);
+        throw err;
+      }
+    }
+  }
   async getCachedUserById(id: string): Promise<UserDocument> {
     const user = await this.redisCacheService.getValue(id);
     console.log(user);

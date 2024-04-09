@@ -1,8 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 
 async function bootstrap() {
@@ -13,7 +13,12 @@ async function bootstrap() {
     rawBody: true,
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { excludeExtraneousValues: true },
+    }),
+  );
   app.useBodyParser('json', { limit: '50mb' });
   app.use(cookieParser());
   app.setGlobalPrefix('api/v1');

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Exclude } from 'class-transformer';
+import { Exclude, instanceToPlain } from 'class-transformer';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -38,6 +38,7 @@ export class UserEntity {
   @Exclude()
   @IsString({ message: 'password field must be of type string.' })
   password: string;
+
   @Prop({ default: new Date() })
   @Exclude()
   passwordChangedAt: Date;
