@@ -86,13 +86,17 @@ export class UserService {
   async updateUserPassword({
     userId,
     password,
+    oldPassword,
   }: {
     userId: string;
     password: string;
+    oldPassword: string;
   }) {
     try {
       const user = await this.findUserById(userId);
-
+      if (!(await user.comparePassword(oldPassword))) {
+        throw new HttpException('oldPassword is not correct.', 400);
+      }
       if (password && user) {
         user.password = password;
         const updatedUser = await user.save();

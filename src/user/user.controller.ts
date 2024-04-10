@@ -36,7 +36,8 @@ export class UserController {
   @Patch('update-password')
   async updateUserPassword(
     @Req() req: any,
-    @Body() body: { password: string; passwordConfirm: string },
+    @Body()
+    body: { password: string; passwordConfirm: string; oldPassword: string },
   ) {
     const user = req.user.user;
     const userId = req.user.userId;
@@ -47,8 +48,13 @@ export class UserController {
       };
     }
     const password = body.password;
+    const oldPassword = body.oldPassword;
     console.log('userId: ', userId);
     console.log('user: ', user);
-    return this.userService.updateUserPassword({ userId, password });
+    return this.userService.updateUserPassword({
+      userId,
+      password,
+      oldPassword,
+    });
   }
 }
