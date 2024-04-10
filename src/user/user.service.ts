@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   Injectable,
@@ -7,6 +8,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RegisterDTO } from 'src/auth/DTOs/register.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UserDocument, UserEntity } from 'src/models/user/user.entity';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
@@ -15,6 +17,7 @@ export class UserService {
   constructor(
     @InjectModel('User') private UserModel: Model<UserEntity>,
     private readonly redisCacheService: RedisCacheService,
+    private CloudinaryService: CloudinaryService,
   ) {}
   async createUser(credentials: RegisterDTO): Promise<UserDocument> {
     try {
@@ -116,6 +119,45 @@ export class UserService {
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, 400);
+    }
+  }
+
+  async updateUserAvatar(file: Express.Multer.File, userId: string) {
+    try {
+      const user = await this.findUserById(userId);
+      if (user.avatar.public_id) {
+        this.CloudinaryService.destroyImage(user.avatar.public_id);
+      }
+      const result = await this.CloudinaryService.uploadImage(file, {
+        resource_type: 'image',
+        folder: 'LMS/avatar/',
+        public_id: `${user.name}-avatar`,
+        width: 150,
+      }).catch((error) => {
+        console.log(error);
+        throw new BadRequestException(error.message);
+      });
+      user.avatar = {
+        public_id: result.public_id,
+        url: result.secure_url,
+      };
+      // user.avatar.public_id = result.public_id;
+      // user.avatar.url = result.secure_url;
+      const updatedUserAvatar = await user.save();
+      console.log(result);
+
+      await this.redisCacheService.setValue(
+        userId,
+        JSON.stringify(updatedUserAvatar),
+      );
+      return {
+        status: 'success',
+        message: 'Your profile photo has been updated successfully.',
+        updatedUserAvatar,
+      };
+    } catch (error) {
+      console.log(error);
+      return error;
     }
   }
 }

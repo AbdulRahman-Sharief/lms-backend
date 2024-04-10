@@ -17,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RedisCacheModule } from './redis-cache/redis-cache.module';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
     AuthModule,
     EmailModule,
     RedisCacheModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [

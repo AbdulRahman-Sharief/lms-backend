@@ -2,18 +2,27 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  FileTypeValidator,
   Get,
+  ParseFilePipe,
   Patch,
+  Post,
   Req,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Request } from 'express';
-import { UserDocument } from 'src/models/user/user.entity';
+import {
+  UserDocument,
+  UserEntity,
+  UserSchema,
+} from 'src/models/user/user.entity';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDTO } from './dtos/user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('user')
-@Serialize(UserDTO)
+// @Serialize(UserEntity)
 export class UserController {
   constructor(private userService: UserService) {}
   @Get('/info')
@@ -56,5 +65,26 @@ export class UserController {
       password,
       oldPassword,
     });
+  }
+
+  @Patch('update-avatar')
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateUserAvatar(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({
+            fileType: /.(jpg|jpeg|png|gif|bmp|tiff|webp)$/i,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Req() req: any,
+  ) {
+    const userId = req.user.userId;
+    return this.userService.updateUserAvatar(file, userId);
+    // console.log(file);
+    // return file;
   }
 }

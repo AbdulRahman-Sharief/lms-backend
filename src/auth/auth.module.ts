@@ -17,6 +17,7 @@ import { GoogleStrategy } from './guards/google-oauth.strategy';
 import { GithubStrategy } from './guards/github-oauth.strategy';
 import { LocalStrategy } from './guards/local-auth.strategy';
 import { JwtRefreshTokenStrategy } from './guards/refresh-auth.strategy';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 @Module({
   imports: [
     DatabaseModule,
@@ -32,6 +33,7 @@ import { JwtRefreshTokenStrategy } from './guards/refresh-auth.strategy';
     EmailModule,
     RedisCacheModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    CloudinaryModule,
   ],
   providers: [
     AuthService,

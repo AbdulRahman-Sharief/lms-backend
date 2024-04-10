@@ -45,6 +45,7 @@ export class UserEntity {
 
   @Prop({
     type: {
+      _id: false,
       public_id: { type: String, required: true, default: null },
       url: { type: String, required: true, default: null },
     },
