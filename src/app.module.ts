@@ -21,6 +21,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CourseModule } from './course/course.module';
 import { ReviewModule } from './review/review.module';
 import { CommentModule } from './comment/comment.module';
+import { QuestionModule } from './question/question.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CommentModule } from './comment/comment.module';
     CourseModule,
     ReviewModule,
     CommentModule,
+    QuestionModule,
   ],
   controllers: [AppController],
   providers: [
