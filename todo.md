@@ -2,3 +2,7 @@
 - password forget/reset process.
 - allow user to update his own email and verify that email through otp code sent to his email.
 - allow user to update his own avatar when he is logged in.
+- handle onDelete cascade.
+- build like and dislike system.
+- photo comments feature.
+- separate courseData and course in db.

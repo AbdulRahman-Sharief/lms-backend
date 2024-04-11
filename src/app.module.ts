@@ -18,6 +18,9 @@ import { RedisCacheModule } from './redis-cache/redis-cache.module';
 import { JwtGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CourseModule } from './course/course.module';
+import { ReviewModule } from './review/review.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -28,6 +31,9 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     EmailModule,
     RedisCacheModule,
     CloudinaryModule,
+    CourseModule,
+    ReviewModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [
