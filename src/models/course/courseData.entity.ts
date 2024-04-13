@@ -14,16 +14,16 @@ export class CourseDataEntity {
   @Prop({ type: String, required: true })
   video_url: string;
 
-  @Prop({ type: Object, required: true })
+  @Prop({ type: Object })
   video_thumbnail: object;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   video_section: string;
 
   @Prop({ type: Number, required: true })
   video_length: number;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   video_player: string;
 
   @Prop({

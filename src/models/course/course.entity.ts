@@ -24,9 +24,12 @@ export class CourseEntity {
       public_id: { type: String, required: true },
       url: { type: String, required: true },
     },
-    required: true,
+    // required: true,
   })
-  thumbnail: object;
+  thumbnail: {
+    public_id: string;
+    url: string;
+  };
 
   @Prop({ type: String, required: true })
   tags: string;
@@ -44,7 +47,7 @@ export class CourseEntity {
   prerequisites: object[];
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-    required: true,
+    // required: true,
   })
   reviews: ReviewEntity[];
   @Prop({
@@ -54,7 +57,7 @@ export class CourseEntity {
         ref: 'CourseData',
       },
     ],
-    required: true,
+    // required: true,
   })
   course_data: CourseDataEntity[];
 

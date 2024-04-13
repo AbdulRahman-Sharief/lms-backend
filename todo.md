@@ -6,3 +6,4 @@
 - build like and dislike system.
 - photo comments feature.
 - separate courseData and course in db.
+- consider adding \_id to all object fields in course model in order to be easy to update them.
