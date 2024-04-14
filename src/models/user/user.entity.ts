@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
+import { CourseEntity } from '../course/course.entity';
 
 export type UserDocument = HydratedDocument<UserEntity>;
 export enum UserRole {
@@ -59,12 +60,16 @@ export class UserEntity {
     message: 'role field must be of either user or admin.',
   })
   role: string;
-  @Prop([
-    {
-      courseId: { type: String, default: null },
-    },
-  ])
-  courses: { courseId: string }[];
+  @Prop({
+    type: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Course',
+      },
+    ],
+    // required: true,
+  })
+  courses: CourseEntity[];
   @Prop({})
   access_token: string;
   @Prop({})

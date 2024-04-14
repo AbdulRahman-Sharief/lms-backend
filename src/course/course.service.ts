@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CourseEntity } from 'src/models/course/course.entity';
 import { CreateCourseDTO } from './DTOs/create-course.dto';
@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateCourseDataDTO } from './DTOs/create-courseData.dto';
 import { UpdateCourseDataDTO } from './DTOs/update-courseData.dto';
 import { UpdateCourseDTO } from './DTOs/update-course.dto';
+import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
 @Injectable()
 export class CourseService {
@@ -15,6 +16,7 @@ export class CourseService {
     @InjectModel('Course') private CourseModel: Model<CourseEntity>,
     @InjectModel('CourseData') private CourseDataModel: Model<CourseDataEntity>,
     private CloudinaryService: CloudinaryService,
+    private readonly redisCacheService: RedisCacheService,
   ) {}
   async createCourseData(course_data: CreateCourseDataDTO[]) {
     const data = [];
@@ -131,5 +133,73 @@ export class CourseService {
     );
 
     return { status: 'success', course: await course.populate('course_data') };
+  }
+  async getSingleCourse(courseId: string) {
+    const cachedCourse = await this.redisCacheService.getValue(courseId);
+    if (cachedCourse) {
+      const course = JSON.parse(cachedCourse);
+      console.log('course Form Cache: ', course);
+      return {
+        status: 'success',
+        course,
+      };
+    }
+    const course = await this.CourseModel.findById(courseId)
+      .populate('course_data', '-video_url -suggestion -questions -links')
+      .exec();
+    console.log('course Form DB: ', course);
+    await this.redisCacheService.setValue(courseId, JSON.stringify(course));
+    return { status: 'success', course };
+  }
+  async getAllCourses() {
+    const cachedCourses = await this.redisCacheService.getValue('allCourses');
+    if (cachedCourses) {
+      const courses = JSON.parse(cachedCourses);
+      console.log('all courses Form Cache: ', courses);
+      return {
+        status: 'success',
+        courses,
+      };
+    }
+    const courses = await this.CourseModel.find()
+      .populate('course_data', '-video_url -suggestion -questions -links')
+      .exec();
+    console.log('all courses Form DB: ', courses);
+
+    await this.redisCacheService.setValue(
+      'allCourses',
+      JSON.stringify(courses),
+    );
+    return { status: 'success', courses };
+  }
+
+  async getCourseByUser(userCoursesList: string[], courseId: string) {
+    const courseExists = userCoursesList.find(
+      (course: any) => course.toString() === courseId,
+    );
+
+    if (!courseExists)
+      throw new HttpException(
+        'You are not eligible to access this course.',
+        401,
+      );
+
+    // const cachedCourse = await this.redisCacheService.getValue(courseId);
+    // const course = cachedCourse
+    //   ? JSON.parse(cachedCourse)
+    //   : await this.CourseModel.findById(courseId).exec();
+    // const content = course.course_data;
+    // if (!cachedCourse) {
+    //   await this.redisCacheService.setValue(courseId, JSON.stringify(course));
+    // }
+    const course = await this.CourseModel.findById(courseId)
+      .populate('course_data')
+      .exec();
+    const content = course.course_data;
+
+    return {
+      status: 'success',
+      content,
+    };
   }
 }

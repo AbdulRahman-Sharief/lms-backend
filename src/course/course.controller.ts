@@ -2,10 +2,12 @@ import {
   Body,
   Controller,
   FileTypeValidator,
+  Get,
   Param,
   ParseFilePipe,
   Patch,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -18,13 +20,14 @@ import { Roles } from 'src/decorators/Roles.decorator';
 import { RolesGuard } from 'src/auth/guards/role-auth.guard';
 import { CourseService } from './course.service';
 import { UpdateCourseDTO } from './DTOs/update-course.dto';
+import { Public } from 'src/decorators/Public.decorator';
 
-@Controller('course')
+@Controller('courses')
 export class CourseController {
   constructor(private CourseService: CourseService) {}
   @UseGuards(RolesGuard)
   @Roles(['admin']) //only allowed for the admin.
-  @Post('/create')
+  @Post('/course/create')
   @UseInterceptors(FileInterceptor('thumbnail'))
   async createCourse(
     @Body() body: CreateCourseDTO,
@@ -61,7 +64,7 @@ export class CourseController {
   }
   @UseGuards(RolesGuard)
   @Roles(['admin']) //only allowed for the admin.
-  @Patch('/update/:courseId')
+  @Patch('/course/update/:courseId')
   @UseInterceptors(FileInterceptor('thumbnail'))
   async updateCourse(
     @Body() body: UpdateCourseDTO,
@@ -89,5 +92,22 @@ export class CourseController {
       ...body,
       thumbnail,
     });
+  }
+  @Public()
+  @Get('/course/:courseId')
+  async getSingleCourse(@Param('courseId') courseId: string) {
+    return this.CourseService.getSingleCourse(courseId);
+  }
+
+  @Get('/course/:courseId/content')
+  async getCourseByUser(@Req() req: any, @Param('courseId') courseId: string) {
+    const userCoursesList = req.user.user.courses;
+    console.log(userCoursesList);
+    return this.CourseService.getCourseByUser(userCoursesList, courseId);
+  }
+  @Public()
+  @Get('/all')
+  async getAllCourse() {
+    return this.CourseService.getAllCourses();
   }
 }
