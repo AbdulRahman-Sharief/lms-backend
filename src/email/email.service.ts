@@ -41,4 +41,25 @@ export class EmailService {
         console.log('ERROR: ', e);
       });
   }
+  public async Notification(
+    user: { name: string; email: string },
+    title: string,
+  ): Promise<any> {
+    await this.mailerService
+      .sendMail({
+        to: user.email, // list of receivers
+        subject: 'New Notification.', // Subject line
+        template: './question-reply.mail.ejs',
+        context: {
+          name: user.name,
+          title,
+        },
+      })
+      .then((info) => {
+        console.log('email sent: ', info.response);
+      })
+      .catch((e) => {
+        console.log('ERROR: ', e);
+      });
+  }
 }

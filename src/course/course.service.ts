@@ -202,4 +202,15 @@ export class CourseService {
       content,
     };
   }
+
+  async getCourseFromDB(courseId: string) {
+    const course = await this.CourseModel.findById(courseId).exec();
+    if (!course) throw new HttpException('No Course with such id.', 400);
+    return course;
+  }
+  async getCourseDataFromDB(courseId: string) {
+    const courseContent = await this.CourseDataModel.findById(courseId).exec();
+    if (!courseContent) throw new HttpException('No Course with such id.', 400);
+    return courseContent;
+  }
 }

@@ -210,7 +210,7 @@ export class AuthService {
   async validateUser(email: LoginDTO['email'], password: LoginDTO['password']) {
     console.log(email);
     const user = await this.UserService.findUserByEmail(email);
-    console.log(user);
+    if (!user) throw new UnauthorizedException('Invalid email');
     const isPasswordCorrect = await user.comparePassword(password);
 
     console.log(isPasswordCorrect);
