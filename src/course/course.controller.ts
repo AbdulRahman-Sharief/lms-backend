@@ -21,10 +21,14 @@ import { RolesGuard } from 'src/auth/guards/role-auth.guard';
 import { CourseService } from './course.service';
 import { UpdateCourseDTO } from './DTOs/update-course.dto';
 import { Public } from 'src/decorators/Public.decorator';
+import { UserService } from 'src/user/user.service';
 
 @Controller('courses')
 export class CourseController {
-  constructor(private CourseService: CourseService) {}
+  constructor(
+    private CourseService: CourseService,
+    private UserService: UserService,
+  ) {}
   @UseGuards(RolesGuard)
   @Roles(['admin']) //only allowed for the admin.
   @Post('/course/create')
@@ -109,5 +113,12 @@ export class CourseController {
   @Get('/all')
   async getAllCourse() {
     return this.CourseService.getAllCourses();
+  }
+
+  @Post('/course/add-to-user')
+  async addCourseToUser(@Req() req: any, @Body() body: { courseId: string }) {
+    const user = await this.UserService.findUserById(req.user.userId);
+    const course = await this.CourseService.getCourseFromDB(body.courseId);
+    return await this.CourseService.addCourseToUser(course, user);
   }
 }

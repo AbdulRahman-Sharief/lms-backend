@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -30,6 +30,12 @@ export class CommentService {
       parent_comment,
     });
     const comment = await CommentEntity.save();
+    return comment;
+  }
+  async getCommentById(commentId: string): Promise<CommentDocument> {
+    const comment = await this.CommentModel.findById(commentId).exec();
+    if (!comment)
+      throw new HttpException('There is no comment with such id.', 400);
     return comment;
   }
 }

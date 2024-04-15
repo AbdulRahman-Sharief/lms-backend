@@ -15,9 +15,13 @@ export class ReviewEntity {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment',
-    required: true,
+    // required: true,
+    default: null,
   })
   comment: CommentEntity;
+
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Comment' })
+  reply: CommentEntity;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(ReviewEntity);

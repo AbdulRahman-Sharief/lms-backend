@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { CourseEntity } from 'src/models/course/course.entity';
+import { CourseDocument, CourseEntity } from 'src/models/course/course.entity';
 import { CreateCourseDTO } from './DTOs/create-course.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CourseDataEntity } from 'src/models/course/courseData.entity';
@@ -9,6 +9,7 @@ import { CreateCourseDataDTO } from './DTOs/create-courseData.dto';
 import { UpdateCourseDataDTO } from './DTOs/update-courseData.dto';
 import { UpdateCourseDTO } from './DTOs/update-course.dto';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
+import { UserDocument } from 'src/models/user/user.entity';
 
 @Injectable()
 export class CourseService {
@@ -212,5 +213,15 @@ export class CourseService {
     const courseContent = await this.CourseDataModel.findById(courseId).exec();
     if (!courseContent) throw new HttpException('No Course with such id.', 400);
     return courseContent;
+  }
+
+  async addCourseToUser(course: CourseDocument, user: UserDocument) {
+    user.courses.push(course);
+    console.log(user);
+    const savedUser = await user.save();
+    return {
+      status: 'success',
+      savedUser,
+    };
   }
 }
