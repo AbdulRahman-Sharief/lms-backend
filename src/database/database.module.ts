@@ -5,6 +5,8 @@ import { VerificationTokenSchema } from 'src/models/auth/token.entity';
 import { CommentSchema } from 'src/models/comment/comment.entity';
 import { CourseSchema } from 'src/models/course/course.entity';
 import { CourseDataSchema } from 'src/models/course/courseData.entity';
+import { NotificationSchema } from 'src/models/notification/notification.entity';
+import { OrderSchema } from 'src/models/order/order.entity';
 import { QuestionSchema } from 'src/models/question/question.entity';
 import { ReviewSchema } from 'src/models/review/review.entity';
 import { UserSchema } from 'src/models/user/user.entity';
@@ -27,6 +29,10 @@ import { UserSchema } from 'src/models/user/user.entity';
     MongooseModule.forFeature([{ name: 'Course', schema: CourseSchema }]),
     MongooseModule.forFeature([
       { name: 'CourseData', schema: CourseDataSchema },
+    ]),
+    MongooseModule.forFeature([{ name: 'Order', schema: OrderSchema }]),
+    MongooseModule.forFeature([
+      { name: 'Notification', schema: NotificationSchema },
     ]),
   ],
   exports: [MongooseModule],

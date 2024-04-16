@@ -25,4 +25,6 @@ export class UpdateCourseDTO {
   prerequisites?: { title: string }[];
   @Expose()
   thumbnail?: Express.Multer.File;
+  @Expose()
+  purchased?: number;
 }

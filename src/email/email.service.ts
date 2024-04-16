@@ -62,4 +62,26 @@ export class EmailService {
         console.log('ERROR: ', e);
       });
   }
+
+  public async OrderConfirmation(
+    user: { email: string; name: string },
+    order: { _id: string; name: string; price: number; date: string },
+  ): Promise<any> {
+    await this.mailerService
+      .sendMail({
+        to: user.email, // list of receivers
+        subject: 'Order Confirmation', // Subject line
+        template: './order-confirmation.mail.ejs',
+        context: {
+          name: user.name,
+          order,
+        },
+      })
+      .then((info) => {
+        console.log('email sent: ', info.response);
+      })
+      .catch((e) => {
+        console.log('ERROR: ', e);
+      });
+  }
 }

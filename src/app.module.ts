@@ -23,6 +23,8 @@ import { CourseModule } from './course/course.module';
 import { ReviewModule } from './review/review.module';
 import { CommentModule } from './comment/comment.module';
 import { QuestionModule } from './question/question.module';
+import { OrderModule } from './order/order.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { QuestionModule } from './question/question.module';
     ReviewModule,
     CommentModule,
     QuestionModule,
+    OrderModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [
