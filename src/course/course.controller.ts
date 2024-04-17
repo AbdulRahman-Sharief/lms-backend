@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   Param,
@@ -127,5 +128,16 @@ export class CourseController {
   @Get('/all/admin')
   async getAllCoursesForAdmin() {
     return await this.CourseService.getAllCoursesForAdmin();
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Delete('/course/:courseId/delete')
+  async deleteCourse(@Param('courseId') courseId: string) {
+    await this.CourseService.deleteCourse(courseId);
+    return {
+      status: 'success',
+      message: 'Course deleted successfully.',
+    };
   }
 }

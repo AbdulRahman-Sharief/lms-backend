@@ -229,4 +229,15 @@ export class CourseService {
     const courses = await this.CourseModel.find().sort({ createdAt: -1 });
     return courses;
   }
+
+  async deleteCourse(courseId: string) {
+    try {
+      const course = await this.CourseModel.findById(courseId);
+      const deleted = await course.deleteOne({ courseId });
+      console.log(deleted);
+      await this.redisCacheService.delValue(courseId);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

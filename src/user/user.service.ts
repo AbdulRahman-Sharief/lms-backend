@@ -178,4 +178,15 @@ export class UserService {
     );
     return user;
   }
+
+  async deleteUser(userId: string) {
+    try {
+      const user = await this.findUserById(userId);
+      const deleted = await user.deleteOne({ userId });
+      console.log(deleted);
+      await this.redisCacheService.delValue(userId);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

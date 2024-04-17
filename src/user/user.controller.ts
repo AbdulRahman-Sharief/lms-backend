@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   Param,
@@ -108,5 +109,17 @@ export class UserController {
     @Body() body: { role: UserRole },
   ) {
     return await this.userService.updateUserRole(userId, body.role);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Delete('/user/:userId/delete')
+  async deleteUser(@Param('userId') userId: string) {
+    await this.userService.deleteUser(userId);
+
+    return {
+      status: 'success',
+      message: 'user deleted successfully.',
+    };
   }
 }
