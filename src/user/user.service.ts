@@ -9,7 +9,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RegisterDTO } from 'src/auth/DTOs/register.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { UserDocument, UserEntity } from 'src/models/user/user.entity';
+import {
+  UserDocument,
+  UserEntity,
+  UserRole,
+} from 'src/models/user/user.entity';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
 @Injectable()
@@ -164,5 +168,14 @@ export class UserService {
   async getAllUsers() {
     const users = await this.UserModel.find().sort({ createdAt: -1 });
     return users;
+  }
+
+  async updateUserRole(userId: string, role: UserRole) {
+    const user = await this.UserModel.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true },
+    );
+    return user;
   }
 }

@@ -4,6 +4,7 @@ import {
   Controller,
   FileTypeValidator,
   Get,
+  Param,
   ParseFilePipe,
   Patch,
   Post,
@@ -17,6 +18,7 @@ import { Request } from 'express';
 import {
   UserDocument,
   UserEntity,
+  UserRole,
   UserSchema,
 } from 'src/models/user/user.entity';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
@@ -96,5 +98,15 @@ export class UserController {
   @Get('/all')
   async getAllUsers() {
     return await this.userService.getAllUsers();
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Patch('/user/:userId/update-role')
+  async updateUserRole(
+    @Param('userId') userId: string,
+    @Body() body: { role: UserRole },
+  ) {
+    return await this.userService.updateUserRole(userId, body.role);
   }
 }
