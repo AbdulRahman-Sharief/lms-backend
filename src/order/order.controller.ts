@@ -1,9 +1,19 @@
-import { Body, Controller, HttpException, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { UserService } from 'src/user/user.service';
 import { CourseService } from 'src/course/course.service';
 import { EmailService } from 'src/email/email.service';
 import { NotificationService } from 'src/notification/notification.service';
+import { RolesGuard } from 'src/auth/guards/role-auth.guard';
+import { Roles } from 'src/decorators/Roles.decorator';
 
 @Controller('orders')
 export class OrderController {
@@ -65,5 +75,11 @@ export class OrderController {
       status: 'success',
       order: course,
     };
+  }
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Get('/all')
+  async getAllOrders() {
+    return await this.OrderService.getAllOrders();
   }
 }

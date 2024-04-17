@@ -9,6 +9,7 @@ import {
   Post,
   Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -21,17 +22,19 @@ import {
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDTO } from './dtos/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-@Controller('user')
+import { RolesGuard } from 'src/auth/guards/role-auth.guard';
+import { Roles } from 'src/decorators/Roles.decorator';
+@Controller('users')
 // @Serialize(UserEntity)
 export class UserController {
   constructor(private userService: UserService) {}
-  @Get('/info')
+  @Get('/user/info')
   async getUserInfo(@Req() req: any) {
     console.log(req.user);
     // return req.user.userId;
     return this.userService.findUserById(req.user.userId);
   }
-  @Patch('update-name')
+  @Patch('/user/update-name')
   async updateUserName(@Req() req: any, @Body() body: { name: string }) {
     const user = req.user.user;
     const userId = req.user.userId;
@@ -42,7 +45,7 @@ export class UserController {
     return await this.userService.updateUserName({ userId, name });
   }
 
-  @Patch('update-password')
+  @Patch('/user/update-password')
   async updateUserPassword(
     @Req() req: any,
     @Body()
@@ -67,7 +70,7 @@ export class UserController {
     });
   }
 
-  @Patch('update-avatar')
+  @Patch('/user/update-avatar')
   @UseInterceptors(FileInterceptor('avatar'))
   async updateUserAvatar(
     @UploadedFile(
@@ -86,5 +89,12 @@ export class UserController {
     return this.userService.updateUserAvatar(file, userId);
     // console.log(file);
     // return file;
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Get('/all')
+  async getAllUsers() {
+    return await this.userService.getAllUsers();
   }
 }

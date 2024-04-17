@@ -160,4 +160,9 @@ export class UserService {
       return error;
     }
   }
+
+  async getAllUsers() {
+    const users = await this.UserModel.find().sort({ createdAt: -1 });
+    return users;
+  }
 }

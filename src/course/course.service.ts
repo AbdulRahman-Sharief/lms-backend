@@ -224,4 +224,9 @@ export class CourseService {
       savedUser,
     };
   }
+
+  async getAllCoursesForAdmin() {
+    const courses = await this.CourseModel.find().sort({ createdAt: -1 });
+    return courses;
+  }
 }

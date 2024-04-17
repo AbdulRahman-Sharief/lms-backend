@@ -34,4 +34,9 @@ export class OrderService {
     console.log(user);
     return order;
   }
+
+  async getAllOrders() {
+    const orders = await this.OrderModel.find().sort({ createdAt: -1 });
+    return orders;
+  }
 }

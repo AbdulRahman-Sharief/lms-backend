@@ -121,4 +121,11 @@ export class CourseController {
     const course = await this.CourseService.getCourseFromDB(body.courseId);
     return await this.CourseService.addCourseToUser(course, user);
   }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Get('/all/admin')
+  async getAllCoursesForAdmin() {
+    return await this.CourseService.getAllCoursesForAdmin();
+  }
 }
