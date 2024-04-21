@@ -82,4 +82,11 @@ export class OrderController {
   async getAllOrders() {
     return await this.OrderService.getAllOrders();
   }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Get('/analytics')
+  async getOrderAnalytics() {
+    return await this.OrderService.getOrdersAnalytics();
+  }
 }

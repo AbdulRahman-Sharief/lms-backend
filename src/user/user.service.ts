@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RegisterDTO } from 'src/auth/DTOs/register.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { generateLast12MonthsData } from 'src/common/utils/analytics.generator';
 import {
   UserDocument,
   UserEntity,
@@ -188,5 +189,9 @@ export class UserService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async getUsersAnalytics() {
+    return await generateLast12MonthsData(this.UserModel);
   }
 }

@@ -122,4 +122,11 @@ export class UserController {
       message: 'user deleted successfully.',
     };
   }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Get('/analytics')
+  async getUsersAnalytics() {
+    return await this.userService.getUsersAnalytics();
+  }
 }

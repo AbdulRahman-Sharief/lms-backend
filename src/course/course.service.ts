@@ -10,6 +10,7 @@ import { UpdateCourseDataDTO } from './DTOs/update-courseData.dto';
 import { UpdateCourseDTO } from './DTOs/update-course.dto';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 import { UserDocument } from 'src/models/user/user.entity';
+import { generateLast12MonthsData } from 'src/common/utils/analytics.generator';
 
 @Injectable()
 export class CourseService {
@@ -239,5 +240,9 @@ export class CourseService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async getCourseAnalytics() {
+    return await generateLast12MonthsData(this.CourseModel);
   }
 }

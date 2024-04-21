@@ -140,4 +140,11 @@ export class CourseController {
       message: 'Course deleted successfully.',
     };
   }
+
+  @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @Get('/analytics')
+  async getCourseAnalytics() {
+    return await this.CourseService.getCourseAnalytics();
+  }
 }

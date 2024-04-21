@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { generateLast12MonthsData } from 'src/common/utils/analytics.generator';
 import { CourseDocument } from 'src/models/course/course.entity';
 import { OrderEntity } from 'src/models/order/order.entity';
 import { UserDocument } from 'src/models/user/user.entity';
@@ -38,5 +39,9 @@ export class OrderService {
   async getAllOrders() {
     const orders = await this.OrderModel.find().sort({ createdAt: -1 });
     return orders;
+  }
+
+  async getOrdersAnalytics() {
+    return await generateLast12MonthsData(this.OrderModel);
   }
 }
