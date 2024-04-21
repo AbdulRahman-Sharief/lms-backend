@@ -26,6 +26,7 @@ import { QuestionModule } from './question/question.module';
 import { OrderModule } from './order/order.module';
 import { NotificationModule } from './notification/notification.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { LayoutModule } from './layout/layout.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     OrderModule,
     NotificationModule,
     ScheduleModule.forRoot(),
+    LayoutModule,
   ],
   controllers: [AppController],
   providers: [

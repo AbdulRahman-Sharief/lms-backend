@@ -5,6 +5,10 @@ import { VerificationTokenSchema } from 'src/models/auth/token.entity';
 import { CommentSchema } from 'src/models/comment/comment.entity';
 import { CourseSchema } from 'src/models/course/course.entity';
 import { CourseDataSchema } from 'src/models/course/courseData.entity';
+import { BannerSchema } from 'src/models/layout/banner.entity';
+import { CategorySchema } from 'src/models/layout/category.entity';
+import { FAQSchema } from 'src/models/layout/faq.entity';
+import { LayoutSchema } from 'src/models/layout/layout.entity';
 import { NotificationSchema } from 'src/models/notification/notification.entity';
 import { OrderSchema } from 'src/models/order/order.entity';
 import { QuestionSchema } from 'src/models/question/question.entity';
@@ -34,6 +38,10 @@ import { UserSchema } from 'src/models/user/user.entity';
     MongooseModule.forFeature([
       { name: 'Notification', schema: NotificationSchema },
     ]),
+    MongooseModule.forFeature([{ name: 'FAQ', schema: FAQSchema }]),
+    MongooseModule.forFeature([{ name: 'Banner', schema: BannerSchema }]),
+    MongooseModule.forFeature([{ name: 'Category', schema: CategorySchema }]),
+    MongooseModule.forFeature([{ name: 'Layout', schema: LayoutSchema }]),
   ],
   exports: [MongooseModule],
 })
