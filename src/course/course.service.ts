@@ -150,7 +150,11 @@ export class CourseService {
       .populate('course_data', '-video_url -suggestion -questions -links')
       .exec();
     console.log('course Form DB: ', course);
-    await this.redisCacheService.setValue(courseId, JSON.stringify(course));
+    await this.redisCacheService.setValue(
+      courseId,
+      JSON.stringify(course),
+      604800,
+    );
     return { status: 'success', course };
   }
   async getAllCourses() {

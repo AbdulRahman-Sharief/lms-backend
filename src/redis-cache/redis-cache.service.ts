@@ -1,13 +1,15 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
+
 @Injectable()
 export class RedisCacheService {
   constructor(@Inject(CACHE_MANAGER) private cacheService: Cache) {}
 
-  async setValue(key: string, value: string): Promise<void> {
+  async setValue(key: string, value: string, seconds?: number): Promise<void> {
     // Set a value in Redis cache
-    await this.cacheService.set(key, value);
+    console.log('ttl', seconds);
+    await this.cacheService.set(key, value, { ttl: seconds } as any);
   }
 
   async getValue(key: string): Promise<string | undefined> {

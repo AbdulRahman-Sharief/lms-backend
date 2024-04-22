@@ -163,19 +163,21 @@ export class AuthService {
     user.access_token = access_token;
     user.refresh_token = refresh_token;
 
+    //only set secure to true in production.
+    if (process.env.NODE_ENV === 'production') accessTokenOptions.secure = true;
+    res.cookie('access_token', access_token, accessTokenOptions);
+    res.cookie('refresh_token', refresh_token, refreshTokenOptions);
+
     //upload session to redis.
     const createdVal = await this.redisCacheService.setValue(
       user._id.toString(),
       JSON.stringify(user) as any,
+      604800,
     );
     console.log('createdVal: ', createdVal);
     const val = await this.redisCacheService.getValue(user._id.toString());
     console.log('val: ', val);
 
-    //only set secure to true in production.
-    if (process.env.NODE_ENV === 'production') accessTokenOptions.secure = true;
-    res.cookie('access_token', access_token, accessTokenOptions);
-    res.cookie('refresh_token', refresh_token, refreshTokenOptions);
     res.status(statusCode).json({
       status: 'success',
       user,

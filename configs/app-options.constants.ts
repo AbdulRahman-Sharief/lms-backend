@@ -15,7 +15,7 @@ export const RedisOptions: CacheModuleAsyncOptions = {
       // },
     });
     return {
-      store: () => store,
+      store,
     };
   },
   inject: [ConfigService],
