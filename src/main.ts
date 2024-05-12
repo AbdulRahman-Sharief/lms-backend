@@ -10,14 +10,15 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
       origin: process.env.ORIGIN,
+      credentials: true,
     },
     rawBody: true,
   });
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
-      transformOptions: { excludeExtraneousValues: true },
+      // transform: true,
+      // transformOptions: { excludeExtraneousValues: true },
     }),
   );
   app.useBodyParser('json', { limit: '50mb' });

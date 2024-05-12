@@ -24,11 +24,13 @@ export class AuthController {
   constructor(private AuthService: AuthService) {}
   @Public()
   @Post('/register')
-  async register(@Body(ValidationPipe) credentials: RegisterDTO) {
+  async register(@Body() credentials: RegisterDTO) {
     if (credentials.password !== credentials.passwordConfirm)
       throw new HttpException('password must match with passwordConfirm.', 500);
-
-    return this.AuthService.register(credentials);
+    const res = await this.AuthService.register(credentials);
+    if (res.error)
+      throw new HttpException(res.error.message, res.error.statusCode);
+    return res;
   }
   @Public()
   @Post('/get-verification-token')

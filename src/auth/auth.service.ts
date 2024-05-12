@@ -70,7 +70,7 @@ export class AuthService {
       };
     } catch (error) {
       console.log('Error: ', error);
-      return { error: 'error' };
+      return { error: error.response };
     }
   }
   async getVerificationToken(email: string) {
@@ -114,37 +114,42 @@ export class AuthService {
     };
   }
   async verifyToken(VerificationToken: string, activationCode: string) {
-    console.log(VerificationToken);
-    const token = await this.JwtService.verifyAsync(VerificationToken);
-    console.log('jwtToken: ', token);
-    const dbToken = await this.VerificationTokenModel.findOne({
-      user: token.sub,
-      email: token.email,
-      token: VerificationToken,
-      expiresAt: { $gt: new Date(token.exp * 1000) },
-    });
-    console.log('dbToken: ', dbToken);
-    if (!dbToken) {
-      throw new UnauthorizedException(
-        'The provided token is invalid or has been expired!',
-      );
+    try {
+      console.log(VerificationToken);
+      const token = await this.JwtService.verifyAsync(VerificationToken);
+      console.log('jwtToken: ', token);
+      const dbToken = await this.VerificationTokenModel.findOne({
+        user: token.sub,
+        email: token.email,
+        token: VerificationToken,
+        expiresAt: { $gt: new Date(token.exp * 1000) },
+      });
+      console.log('dbToken: ', dbToken);
+      if (!dbToken) {
+        throw new UnauthorizedException(
+          'The provided token is invalid or has been expired!',
+        );
+      }
+      if (token.activationCode !== activationCode) {
+        throw new HttpException('Invalid activation code.', 400);
+      }
+      const user = await this.UserService.findUserByEmail(token.email);
+      console.log('User: ', user);
+      user.emailVerified = true;
+      user.emailVerifiedAt = new Date();
+      const activatedUser = await user.save();
+      console.log('activatedUser: ', activatedUser);
+      dbToken.token = null;
+      dbToken.expiresAt = null;
+      await dbToken.save();
+      return {
+        status: 'success',
+        message: 'Your account has been successfully activated. go and login.',
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 400);
     }
-    if (token.activationCode !== activationCode) {
-      throw new HttpException('Invalid activation code.', 400);
-    }
-    const user = await this.UserService.findUserByEmail(token.email);
-    console.log('User: ', user);
-    user.emailVerified = true;
-    user.emailVerifiedAt = new Date();
-    const activatedUser = await user.save();
-    console.log('activatedUser: ', activatedUser);
-    dbToken.token = null;
-    dbToken.expiresAt = null;
-    await dbToken.save();
-    return {
-      status: 'success',
-      message: 'Your account has been successfully activated. go and login.',
-    };
   }
 
   async sendToken(user: UserDocument, statusCode: number, res: Response) {

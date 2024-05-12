@@ -53,10 +53,10 @@ import { LayoutModule } from './layout/layout.module';
       provide: APP_GUARD,
       useClass: JwtGuard,
     },
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
-    },
+    // {
+    //   provide: APP_PIPE,
+    //   useClass: ValidationPipe,
+    // },
   ],
   exports: [],
 })
